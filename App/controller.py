@@ -29,10 +29,44 @@ import csv
 El controlador se encarga de mediar entre la vista y el modelo.
 """
 
-# Inicialización del Catálogo de libros
+#======================================
+# Inicialización del Catálogo
+#======================================
 
+def initCatalog():
+    """
+    Llama la funcion de inicializacion del catalogo del modelo.
+    """
+    analyzer = model.newAnalyzer()
+    return analyzer
+
+#==================================
 # Funciones para la carga de datos
+#==================================
 
-# Funciones de ordenamiento
+def loadData(analyzer):
+    """
+    Carga los datos de los archivos y cargar los datos en la
+    estructura de datos
+    """
+    loadAirports(analyzer)
+    loadRoutes(analyzer)
+    return analyzer
 
-# Funciones de consulta sobre el catálogo
+def loadAirports(catalog):
+    """
+    Carga los aeropuertos.
+    """
+    booksfile = cf.data_dir + 'Skylines/airports_full.csv'
+    input_file = csv.DictReader(open(booksfile, encoding='utf-8'))
+    for airport in input_file:
+        model.addAirport(catalog, airport)
+    
+def loadRoutes(catalog):
+    """
+    Carga las rutas.
+    """
+    booksfile = cf.data_dir + 'Skylines/routes_full.csv'
+    input_file = csv.DictReader(open(booksfile, encoding='utf-8'))
+    for route in input_file:
+        model.addRoute(catalog, route)

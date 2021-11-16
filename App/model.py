@@ -24,27 +24,65 @@
  * Dario Correal - Version inicial
  """
 
-
-import config as cf
+import config
+from DISClib.ADT.graph import gr
+from DISClib.ADT import map as m
 from DISClib.ADT import list as lt
-from DISClib.ADT import map as mp
-from DISClib.DataStructures import mapentry as me
-from DISClib.Algorithms.Sorting import shellsort as sa
-assert cf
+from DISClib.Algorithms.Graphs import scc
+from DISClib.Algorithms.Graphs import dijsktra as djk
+from DISClib.Utils import error as error
+assert config
 
 """
-Se define la estructura de un catálogo de videos. El catálogo tendrá dos listas, una para los videos, otra para las categorias de
-los mismos.
+En este archivo definimos los TADs que vamos a usar y las operaciones
+de creacion y consulta sobre las estructuras de datos.
 """
 
+#=======================================================================
 # Construccion de modelos
+#=======================================================================
 
-# Funciones para agregar informacion al catalogo
+def newAnalyzer():
+    """ Inicializa el analizador
+    airports: tabla de hash para guardar los vertices del grafo
+    red: grafo para representar los vuelos entre aeropuertos
+    """
+    
+    analyzer = {
+                'red': None,
+                }
 
-# Funciones para creacion de datos
+    analyzer['red'] = gr.newGraph(datastructure='ADJ_LIST',
+                                              directed=True,
+                                              size=14000,
+                                              comparefunction=None)
+    return analyzer
 
-# Funciones de consulta
+#======================================================================
+# Agregar info al catalogo
+#======================================================================
 
-# Funciones utilizadas para comparar elementos dentro de una lista
+def addAirport(analyzer,airport):
+    """
+    Adiciona un aeropuerto como vertice del grafo
+    """
+    id = airport['IATA']
+    if not gr.containsVertex(analyzer['red'], id):
+            gr.insertVertex(analyzer['red'], id)
+    return analyzer
 
-# Funciones de ordenamiento
+def addRoute(analyzer, route):
+    """
+    Adiciona una ruta como arco entre dos aeropuertos
+    """
+    origin = route['Departure']
+    destination = route['Destination']
+    distance = route['distance_km']
+    edge = gr.getEdge(analyzer['red'], origin, destination)
+    if edge is None:
+        gr.addEdge(analyzer['red'], origin, destination, distance)
+    return analyzer
+
+#======================================================================
+# Funciones de comparacion
+#======================================================================

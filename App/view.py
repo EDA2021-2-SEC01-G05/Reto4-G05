@@ -25,7 +25,8 @@ import sys
 import controller
 from DISClib.ADT import list as lt
 assert cf
-
+import time
+from DISClib.ADT.graph import gr, numEdges
 
 """
 La vista se encarga de la interacción con el usuario
@@ -33,26 +34,124 @@ Presenta el menu de opciones y por cada seleccion
 se hace la solicitud al controlador para ejecutar la
 operación solicitada
 """
+#=================================================================================
+# Funciones Iniciales
+#=================================================================================
 
 def printMenu():
+    print("*******************************************")
     print("Bienvenido")
-    print("1- Cargar información en el catálogo")
-    print("2- ")
+    print("1- Inicializar Analizador")
+    print("2- Cargar información de transporte aereo")
+    print("3- Requerimiento 1")
+    print("4- Requerimiento 2")
+    print("5- Requerimiento 3")
+    print("6- Requerimiento 4")
+    print("7- Requerimiento 5")
+    print("0- Salir")
+    print("*******************************************")
 
-catalog = None
+def loadData(analyzer):
+    """
+    Carga los datos en la estructura de datos
+    """
+    return controller.loadData(analyzer)
 
-"""
-Menu principal
-"""
+analyzer = None
+
+#=================================================================================
+# Especificaciones de la impresion de datos
+#=================================================================================
+
+def printData(datos):
+    size = lt.size(datos)
+    if size>0:
+        for dato in lt.iterator(datos):
+            if dato is not None:
+                None 
+    else:   
+        print ("No se encontraron datos")
+
+#=================================================================================
+# Requerimientos
+#=================================================================================
+
+def cargaDatos(analyzer):
+    return controller.loadData(analyzer)
+
+def Requerimiento1(analyzer):
+    return None
+
+def Requerimiento2(analyzer):
+    return None
+
+def Requerimiento3(analyzer):
+    return None
+
+def Requerimiento4(analyzer):
+    return None
+
+def Requerimiento5(analyzer):
+    return None
+
+#================================================================================
+# Menu principal
+#================================================================================
+
 while True:
     printMenu()
     inputs = input('Seleccione una opción para continuar\n')
+
     if int(inputs[0]) == 1:
-        print("Cargando información de los archivos ....")
+        print("\nInicializando....")
+        analyzer = controller.initCatalog()
 
     elif int(inputs[0]) == 2:
-        pass
+        print("\nCargando información de transporte aereo ....")
+        start_time = time.process_time()
+        cargaDatos(analyzer)
+        stop_time = time.process_time()
+        elapsed_time_mseg = (stop_time - start_time)*1000
+        print("Tiempo de ejecución: " + str(elapsed_time_mseg))
+        print("-" * 50)
+        print("Total de aeropuertos: " + str(gr.numVertices(analyzer['red'])))
+        print("Total de rutas: " + str(gr.numEdges(analyzer['red'])))
 
+    elif int(inputs[0]) == 3:
+        start_time = time.process_time()
+        Requerimiento1(analyzer)
+        stop_time = time.process_time()
+        elapsed_time_mseg = (stop_time - start_time)*1000
+        print("Tiempo de ejecución: " + str(elapsed_time_mseg))
+
+    elif int(inputs[0]) == 4:
+        start_time = time.process_time()
+        Requerimiento2(analyzer)
+        stop_time = time.process_time()
+        elapsed_time_mseg = (stop_time - start_time)*1000
+        print("Tiempo de ejecución: " + str(elapsed_time_mseg))
+    
+    elif int(inputs[0]) == 5:
+        start_time = time.process_time()
+        Requerimiento3(analyzer)
+        stop_time = time.process_time()
+        elapsed_time_mseg = (stop_time - start_time)*1000
+        print("Tiempo de ejecución: " + str(elapsed_time_mseg))
+    
+    elif int(inputs[0]) == 6:
+        start_time = time.process_time()
+        Requerimiento4(analyzer)
+        stop_time = time.process_time()
+        elapsed_time_mseg = (stop_time - start_time)*1000
+        print("Tiempo de ejecución: " + str(elapsed_time_mseg))
+
+    elif int(inputs[0]) == 7:
+        start_time = time.process_time()
+        Requerimiento5(analyzer)
+        stop_time = time.process_time()
+        elapsed_time_mseg = (stop_time - start_time)*1000
+        print("Tiempo de ejecución: " + str(elapsed_time_mseg))
+        
     else:
         sys.exit(0)
 sys.exit(0)
