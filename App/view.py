@@ -63,12 +63,13 @@ analyzer = None
 # Especificaciones de la impresion de datos
 #=================================================================================
 
-def printData(datos):
+def printDataReq1(datos):
     size = lt.size(datos)
     if size>0:
         for dato in lt.iterator(datos):
             if dato is not None:
-                None 
+                print('IATA: ' + dato['IATA'] + ', Nombre: ' + dato['Name']
+                     + ', Ciudad: ' + dato['City'] + ', Pais: ' + dato['Country']) 
     else:   
         print ("No se encontraron datos")
 
@@ -80,6 +81,11 @@ def cargaDatos(analyzer):
     return controller.loadData(analyzer)
 
 def Requerimiento1(analyzer):
+    aeropuertos = controller.Requerimiento1(analyzer)
+    interconexiones = lt.removeLast(aeropuertos)
+    printDataReq1(aeropuertos)
+    print('Número de aeropuertos interconectados: ' + str(interconexiones))
+    print("-" * 50)
     return None
 
 def Requerimiento2(analyzer):

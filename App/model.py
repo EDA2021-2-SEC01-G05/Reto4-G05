@@ -26,8 +26,10 @@
 
 import config
 from DISClib.ADT.graph import gr
-from DISClib.ADT import map as m
+from DISClib.ADT import map as mp
+from DISClib.DataStructures import mapentry as me
 from DISClib.ADT import list as lt
+from DISClib.Algorithms.Sorting import mergesort as ms
 from DISClib.Algorithms.Graphs import scc
 from DISClib.Algorithms.Graphs import dijsktra as djk
 from DISClib.Utils import error as error
@@ -50,12 +52,14 @@ def newAnalyzer():
     
     analyzer = {
                 'red': None,
+                'aeropuertos': None,
                 }
 
     analyzer['red'] = gr.newGraph(datastructure='ADJ_LIST',
                                               directed=True,
                                               size=14000,
                                               comparefunction=None)
+    analyzer['aeropuertos'] = mp.newMap()
     return analyzer
 
 #======================================================================
@@ -67,6 +71,7 @@ def addAirport(analyzer,airport):
     Adiciona un aeropuerto como vertice del grafo
     """
     id = airport['IATA']
+    mp.put(analyzer['aeropuertos'],id,airport)
     if not gr.containsVertex(analyzer['red'], id):
             gr.insertVertex(analyzer['red'], id)
     return analyzer
@@ -86,3 +91,36 @@ def addRoute(analyzer, route):
 #======================================================================
 # Funciones de comparacion
 #======================================================================
+
+def ordenAscendenteD(a,b):
+    if (a > b):
+        return 0
+    return -1
+
+#======================================================================
+# Requerimientos
+#======================================================================
+
+def Requerimiento1(analyzer):
+    grafo = analyzer['red']
+    aeropuertos = gr.vertices(grafo)
+    conexiones = lt.newList()
+    for aeropuerto in lt.iterator(aeropuertos):
+        num = gr.degree(grafo,aeropuerto)
+        lt.addLast(conexiones,num)
+    ms.sort(conexiones,ordenAscendenteD)
+    c = lt.lastElement(conexiones)
+
+    mas_conectados = lt.newList()
+    for aeropuerto in lt.iterator(aeropuertos):
+        n = gr.degree(grafo,aeropuerto)
+        if int(n) == int(c):
+            lt.addLast(mas_conectados,aeropuerto)
+    mapa = analyzer['aeropuertos']
+    resultado = lt.newList('ARRAY_LIST')
+    for ide in lt.iterator(mas_conectados):
+        pareja = mp.get(mapa,ide)
+        valor = me.getValue(pareja)
+        lt.addLast(resultado,valor)
+    lt.addLast(resultado,c)
+    return resultado

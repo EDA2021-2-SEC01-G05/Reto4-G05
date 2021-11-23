@@ -70,3 +70,10 @@ def loadRoutes(catalog):
     input_file = csv.DictReader(open(booksfile, encoding='utf-8'))
     for route in input_file:
         model.addRoute(catalog, route)
+
+#========================================================
+# Requerimientos
+#========================================================
+
+def Requerimiento1(analyzer):
+    return model.Requerimiento1(analyzer)
