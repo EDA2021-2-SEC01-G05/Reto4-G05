@@ -60,6 +60,7 @@ def newAnalyzer():
                                               size=14000,
                                               comparefunction=None)
     analyzer['aeropuertos'] = mp.newMap()
+    analyzer['ciudades'] = mp.newMap()
     return analyzer
 
 #======================================================================
@@ -68,7 +69,7 @@ def newAnalyzer():
 
 def addAirport(analyzer,airport):
     """
-    Adiciona un aeropuerto como vertice del grafo
+    Adiciona un aeropuerto al map aeropuertos como vertice del grafo red  
     """
     id = airport['IATA']
     mp.put(analyzer['aeropuertos'],id,airport)
@@ -78,7 +79,7 @@ def addAirport(analyzer,airport):
 
 def addRoute(analyzer, route):
     """
-    Adiciona una ruta como arco entre dos aeropuertos
+    Adiciona una ruta como arco entre dos aeropuertos en el grafo red
     """
     origin = route['Departure']
     destination = route['Destination']
@@ -88,6 +89,13 @@ def addRoute(analyzer, route):
         gr.addEdge(analyzer['red'], origin, destination, distance)
     return analyzer
 
+def addCity(analyzer, city):
+    """
+    Adiciona una ciudad al map ciudades
+    """
+    name = city['city']
+    mp.put(analyzer['ciudades'],name,city)
+    return analyzer
 #======================================================================
 # Funciones de comparacion
 #======================================================================
