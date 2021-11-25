@@ -180,10 +180,10 @@ def Requerimiento1(analyzer):
     conexiones = lt.newList()
     for aeropuerto in lt.iterator(aeropuertos):
         num = gr.degree(grafo,aeropuerto)
-        lt.addLast(conexiones,num)
+        if num > 200:
+            lt.addLast(conexiones,num)
     ms.sort(conexiones,ordenAscendenteD)
     c = lt.lastElement(conexiones)
-
     mas_conectados = lt.newList()
     for aeropuerto in lt.iterator(aeropuertos):
         n = gr.degree(grafo,aeropuerto)
