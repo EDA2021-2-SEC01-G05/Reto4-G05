@@ -24,11 +24,12 @@ import config as cf
 import sys
 import controller
 from DISClib.ADT import list as lt
+from DISClib.ADT import graph as gr
+from DISClib.ADT import map as mp
+from DISClib.ADT import stack as st
+from DISClib.DataStructures import mapentry as me
 assert cf
 import time
-from DISClib.ADT.graph import gr, numEdges
-from DISClib.ADT import map as mp
-from DISClib.DataStructures import mapentry as me
 
 """
 La vista se encarga de la interacción con el usuario
@@ -75,6 +76,11 @@ def printDataReq1(datos):
     else:   
         print ("No se encontraron datos")
 
+def printAeropuerto(dato):
+    if dato is not None:
+                print('IATA: ' + dato['IATA'] + ', Nombre: ' + dato['Name']
+                     + ', Ciudad: ' + dato['City'] + ', Pais: ' + dato['Country'])
+
 def printFirst(analyzer, indice):
     llaves = mp.keySet(analyzer[indice])
     p = lt.firstElement(llaves)
@@ -84,8 +90,29 @@ def printFirst(analyzer, indice):
         print("Nombre: " + valor["Name"] + " Ciudad: " + valor["City"] + " País: " + valor["Country"] 
                             + " Latitud: " + valor["Latitude"] + " Longitud: " + valor["Longitude"])
     elif indice == "ciudades":
+        valor = lt.removeLast(valor)
         print("Nombre: " + valor["city_ascii"] + " Latitud: " + valor["lat"] + " Longitud: " + valor["lng"] 
                                                                     + " Población: " + valor["population"])
+def PrintCargaDatos(analyzer):
+    print("-" * 50)
+    print("Información Grafo Dirigido")
+    print("-" * 50)
+    print("Total de aeropuertos: " + str(gr.numVertices(analyzer['red'])))
+    print("Total de rutas: " + str(gr.numEdges(analyzer['red'])))
+    print("-" * 50)
+    print("Información Grafo No Dirigido")
+    print("-" * 50)
+    print("Total de aeropuertos: " + str(gr.numVertices(analyzer['blue'])))
+    print("Total de rutas: " + str(gr.numEdges(analyzer['blue'])))
+    print("-" * 50)
+    print("Total de ciudades: "+  str(mp.size(analyzer["ciudades"])))
+    print("-" * 50)
+    print("Primer Aeropuerto Cargado: ")
+    printFirst(analyzer, "aeropuertos")
+    print("-" * 50)
+    print("Primera Ciudad Cargado: ")
+    printFirst(analyzer, "ciudades")
+    print("-" * 50 +"\n")
 
 #=================================================================================
 # Requerimientos
@@ -105,7 +132,36 @@ def Requerimiento1(analyzer):
 def Requerimiento2(analyzer):
     return None
 
-def Requerimiento3(analyzer):
+def Requerimiento3(analyzer,origen,destino):
+    resultado = controller.Requerimiento3(analyzer,origen,destino)
+    aero_o = lt.removeFirst(resultado)
+    aero_d = lt.removeFirst(resultado)
+    camino = lt.removeFirst(resultado)
+    dt_o = lt.removeFirst(resultado)
+    dt_d = lt.removeFirst(resultado)
+    d_aerea = lt.newList()
+    print("-" * 50)
+    print('Aeropuerto de origen: ')
+    printAeropuerto(aero_o)
+    print('Aeropuerto de destino: ')
+    printAeropuerto(aero_d)
+    print("-" * 50)
+    print('Ruta Aérea por segmentos: ')
+    tamano = st.size(camino)
+    i = 0
+    while i < tamano:
+        path = st.pop(camino)
+        print(str(path))
+        lt.addLast(d_aerea,float(path['weight']))
+        i += 1
+    total_a = 0
+    for distance in lt.iterator(d_aerea):
+        total_a += distance
+    print("-" * 50)
+    print('Distancia total ruta: ' + str(int(dt_o+dt_d+total_a)))
+    print('Distancia total aereo: ' + str(int(total_a)))
+    print('Distancia ciudad-aeropuerto origen: ' + str(int(dt_o)))
+    print('Distancia ciudad-aeropuerto destino: ' + str(int(dt_d)))
     return None
 
 def Requerimiento4(analyzer):
@@ -133,25 +189,7 @@ while True:
         stop_time = time.process_time()
         elapsed_time_mseg = (stop_time - start_time)*1000
         print("Tiempo de ejecución: " + str(elapsed_time_mseg))
-        print("-" * 50)
-        print("Información Grafo Dirigido")
-        print("-" * 50)
-        print("Total de aeropuertos: " + str(gr.numVertices(analyzer['red'])))
-        print("Total de rutas: " + str(gr.numEdges(analyzer['red'])))
-        print("-" * 50)
-        print("Información Grafo No Dirigido")
-        print("-" * 50)
-        print("Total de aeropuertos: " + str(gr.numVertices(analyzer['blue'])))
-        print("Total de rutas: " + str(gr.numEdges(analyzer['blue'])))
-        print("-" * 50)
-        print("Total de ciudades: "+  str(mp.size(analyzer["ciudades"])))
-        print("-" * 50)
-        print("Primer Aeropuerto Cargado: ")
-        printFirst(analyzer, "aeropuertos")
-        print("-" * 50)
-        print("Primera Ciudad Cargado: ")
-        printFirst(analyzer, "ciudades")
-        print("-" * 50 +"\n")
+        PrintCargaDatos(analyzer)
 
     elif int(inputs[0]) == 3:
         start_time = time.process_time()
@@ -168,8 +206,10 @@ while True:
         print("Tiempo de ejecución: " + str(elapsed_time_mseg))
     
     elif int(inputs[0]) == 5:
+        origen = input('Ciudad de origen: ')
+        destino = input('Ciudad de destino: ' )
         start_time = time.process_time()
-        Requerimiento3(analyzer)
+        Requerimiento3(analyzer,origen,destino)
         stop_time = time.process_time()
         elapsed_time_mseg = (stop_time - start_time)*1000
         print("Tiempo de ejecución: " + str(elapsed_time_mseg))

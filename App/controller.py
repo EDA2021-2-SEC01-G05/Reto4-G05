@@ -97,3 +97,6 @@ def loadRoutesND(catalog):
 
 def Requerimiento1(analyzer):
     return model.Requerimiento1(analyzer)
+
+def Requerimiento3(analyzer,origen,destino):
+    return model.Requerimiento3(analyzer,origen,destino)
