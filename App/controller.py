@@ -52,6 +52,7 @@ def loadData(analyzer):
     loadAirports(analyzer)
     loadRoutes(analyzer)
     loadCities(analyzer)
+    loadRoutesND(analyzer)
     return analyzer
 
 def loadAirports(catalog):
@@ -80,6 +81,15 @@ def loadCities(analyzer):
     input_file = csv.DictReader(open(booksfile, encoding='utf-8'))
     for city in input_file:
         model.addCity(analyzer, city)
+
+def loadRoutesND(catalog):
+    """
+    Carga las rutas.
+    """
+    booksfile = cf.data_dir + 'Skylines/routes_full.csv'
+    input_file = csv.DictReader(open(booksfile, encoding='utf-8'))
+    for route in input_file:
+        model.addRouteND(catalog, route)
 
 #========================================================
 # Requerimientos

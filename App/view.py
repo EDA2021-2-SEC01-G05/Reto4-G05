@@ -27,6 +27,8 @@ from DISClib.ADT import list as lt
 assert cf
 import time
 from DISClib.ADT.graph import gr, numEdges
+from DISClib.ADT import map as mp
+from DISClib.DataStructures import mapentry as me
 
 """
 La vista se encarga de la interacción con el usuario
@@ -72,6 +74,18 @@ def printDataReq1(datos):
                      + ', Ciudad: ' + dato['City'] + ', Pais: ' + dato['Country']) 
     else:   
         print ("No se encontraron datos")
+
+def printFirst(analyzer, indice):
+    llaves = mp.keySet(analyzer[indice])
+    p = lt.firstElement(llaves)
+    primero = mp.get(analyzer[indice], p)
+    valor = me.getValue(primero)
+    if indice == "aeropuertos":
+        print("Nombre: " + valor["Name"] + " Ciudad: " + valor["City"] + " País: " + valor["Country"] 
+                            + " Latitud: " + valor["Latitude"] + " Longitud: " + valor["Longitude"])
+    elif indice == "ciudades":
+        print("Nombre: " + valor["city_ascii"] + " Latitud: " + valor["lat"] + " Longitud: " + valor["lng"] 
+                                                                    + " Población: " + valor["population"])
 
 #=================================================================================
 # Requerimientos
@@ -120,8 +134,24 @@ while True:
         elapsed_time_mseg = (stop_time - start_time)*1000
         print("Tiempo de ejecución: " + str(elapsed_time_mseg))
         print("-" * 50)
+        print("Información Grafo Dirigido")
+        print("-" * 50)
         print("Total de aeropuertos: " + str(gr.numVertices(analyzer['red'])))
         print("Total de rutas: " + str(gr.numEdges(analyzer['red'])))
+        print("-" * 50)
+        print("Información Grafo No Dirigido")
+        print("-" * 50)
+        print("Total de aeropuertos: " + str(gr.numVertices(analyzer['blue'])))
+        print("Total de rutas: " + str(gr.numEdges(analyzer['blue'])))
+        print("-" * 50)
+        print("Total de ciudades: "+  str(mp.size(analyzer["ciudades"])))
+        print("-" * 50)
+        print("Primer Aeropuerto Cargado: ")
+        printFirst(analyzer, "aeropuertos")
+        print("-" * 50)
+        print("Primera Ciudad Cargado: ")
+        printFirst(analyzer, "ciudades")
+        print("-" * 50 +"\n")
 
     elif int(inputs[0]) == 3:
         start_time = time.process_time()

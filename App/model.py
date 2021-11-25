@@ -59,6 +59,10 @@ def newAnalyzer():
                                               directed=True,
                                               size=14000,
                                               comparefunction=None)
+    analyzer['blue'] = gr.newGraph(datastructure='ADJ_LIST',
+                                              directed=False,
+                                              size=14000,
+                                              comparefunction=None)                                          
     analyzer['aeropuertos'] = mp.newMap()
     analyzer['ciudades'] = mp.newMap()
     return analyzer
@@ -96,6 +100,24 @@ def addCity(analyzer, city):
     name = city['city']
     mp.put(analyzer['ciudades'],name,city)
     return analyzer
+
+def addRouteND(analyzer, route):
+    """
+    Adiciona una ruta como arco entre dos aeropuertos en el grafo blue
+    """
+    origin = route['Departure']
+    destination = route['Destination']
+    distance = route['distance_km']
+    red = analyzer["red"]
+    edge = gr.getEdge(red, destination, origin)
+    if edge is not None:
+        if gr.containsVertex(analyzer["blue"], destination) is False:
+            gr.insertVertex(analyzer["blue"], destination)
+        if gr.containsVertex(analyzer["blue"], origin) is False:
+            gr.insertVertex(analyzer["blue"], origin)
+        gr.addEdge(analyzer["blue"], destination, origin, distance)
+    return analyzer
+
 #======================================================================
 # Funciones de comparacion
 #======================================================================
