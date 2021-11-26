@@ -100,3 +100,6 @@ def Requerimiento1(analyzer):
 
 def Requerimiento3(analyzer,origen,destino):
     return model.Requerimiento3(analyzer,origen,destino)
+
+def Requerimiento5(analyzer,aeropuerto):
+    return model.Requerimiento5(analyzer,aeropuerto)

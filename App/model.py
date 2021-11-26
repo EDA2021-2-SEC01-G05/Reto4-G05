@@ -371,3 +371,17 @@ def Requerimiento3(analyzer,origen,destino):
     lt.addLast(resultado,dt_o)
     lt.addLast(resultado,dt_d)
     return resultado
+
+def Requerimiento5(analyzer,aeropuerto):
+    grafo = analyzer['red']
+    iatas = gr.adjacents(grafo,aeropuerto)
+    aeropuertos = analyzer['aeropuertos']
+    resultado = lt.newList()
+    lt.addLast(resultado,lt.size(iatas))
+    lista = lt.newList()
+    for iata in lt.iterator(iatas):
+        pareja = mp.get(aeropuertos,iata)
+        aeropuerto = me.getValue(pareja)
+        lt.addLast(lista,aeropuerto)
+    lt.addLast(resultado,lista)
+    return resultado

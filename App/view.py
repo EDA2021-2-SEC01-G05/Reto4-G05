@@ -167,7 +167,14 @@ def Requerimiento3(analyzer,origen,destino):
 def Requerimiento4(analyzer):
     return None
 
-def Requerimiento5(analyzer):
+def Requerimiento5(analyzer,aeropuerto):
+    resultado = controller.Requerimiento5(analyzer,aeropuerto)
+    num = lt.removeFirst(resultado)
+    lista = lt.removeFirst(resultado)
+    print('Numero de aeropuertos afectados: ' + str(num))
+    print("-" * 50)
+    print('Lista de aeropuertos afectados: ')
+    printDataReq1(lista)
     return None
 
 #================================================================================
@@ -222,8 +229,9 @@ while True:
         print("Tiempo de ejecución: " + str(elapsed_time_mseg))
 
     elif int(inputs[0]) == 7:
+        aeropuerto = input('Ingrese el IATA del aeropuerto fuera de funcionamiento: ')
         start_time = time.process_time()
-        Requerimiento5(analyzer)
+        Requerimiento5(analyzer,aeropuerto)
         stop_time = time.process_time()
         elapsed_time_mseg = (stop_time - start_time)*1000
         print("Tiempo de ejecución: " + str(elapsed_time_mseg))
