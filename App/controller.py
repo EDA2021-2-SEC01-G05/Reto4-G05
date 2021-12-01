@@ -53,6 +53,7 @@ def loadData(analyzer):
     loadRoutes(analyzer)
     loadCities(analyzer)
     loadRoutesND(analyzer)
+    #loadGreen(analyzer, 'Skylines/routes_full.csv')
     return analyzer
 
 def loadAirports(catalog):
@@ -91,6 +92,25 @@ def loadRoutesND(catalog):
     for route in input_file:
         model.addRouteND(catalog, route)
 
+def loadGreen(analyzer, servicesfile):
+    """
+    Carga las rutas bien hecho.
+    """
+    servicesfile = cf.data_dir + servicesfile
+    input_file = csv.DictReader(open(servicesfile, encoding="utf-8"),
+                                delimiter=",")
+    lastflight = None
+    for flight in input_file:
+        if lastflight is not None:
+            sameservice = lastflight['Airline'] == flight['Airline']
+            samedirection = lastflight['Destination'] == flight['Destination']
+            samebusStop = lastflight['Departure'] == flight['Departure']
+            if sameservice and samedirection and not samebusStop:
+                model.addAirportConnection(analyzer, lastflight, flight)
+        lastflight = flight
+    return analyzer
+
+
 #========================================================
 # Requerimientos
 #========================================================
@@ -98,8 +118,15 @@ def loadRoutesND(catalog):
 def Requerimiento1(analyzer):
     return model.Requerimiento1(analyzer)
 
+def Requerimiento2(analyzer, IATA1, IATA2):
+    return model.clusterAirports(analyzer, IATA1, IATA2)
+
 def Requerimiento3(analyzer,origen,destino):
     return model.Requerimiento3(analyzer,origen,destino)
 
+def Requerimiento4(analyzer, origen, millas):
+    return model.lifeMiles(analyzer, origen, millas)
+
 def Requerimiento5(analyzer,aeropuerto):
     return model.Requerimiento5(analyzer,aeropuerto)
+

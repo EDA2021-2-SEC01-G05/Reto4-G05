@@ -30,6 +30,7 @@ from DISClib.ADT import stack as st
 from DISClib.DataStructures import mapentry as me
 assert cf
 import time
+import threading
 
 """
 La vista se encarga de la interacción con el usuario
@@ -129,8 +130,15 @@ def Requerimiento1(analyzer):
     print("-" * 50)
     return None
 
-def Requerimiento2(analyzer):
-    return None
+def Requerimiento2(analyzer, Aero_1, Aero_2):
+    verificación, total = controller.Requerimiento2(analyzer, Aero_1, Aero_2)
+    print("-" * 50)
+    print("Total de clusteres presentes: " + str(total))
+    print("-" * 50)
+    if verificación is True:
+        print("Los aeropuertos " + Aero_1 + " y " + Aero_2 + " SI estan Conectados.")
+    else:
+        print("Los aeropuertos " + Aero_1 + " y " + Aero_2 + " NO estan Conectados.")
 
 def Requerimiento3(analyzer,origen,destino):
     resultado = controller.Requerimiento3(analyzer,origen,destino)
@@ -165,6 +173,15 @@ def Requerimiento3(analyzer,origen,destino):
     return None
 
 def Requerimiento4(analyzer):
+    origen = "bogota"
+    millas = 10291
+    llaves = controller.Requerimiento4(analyzer, origen, millas)
+    x = 0
+    for llave in lt.iterator(llaves):
+        print(llave)
+        if x == 10:
+            break
+        x+= 1
     return None
 
 def Requerimiento5(analyzer,aeropuerto):
@@ -180,62 +197,69 @@ def Requerimiento5(analyzer,aeropuerto):
 #================================================================================
 # Menu principal
 #================================================================================
+def thread_cycle():
+    while True:
+        printMenu()
+        inputs = input('Seleccione una opción para continuar\n')
 
-while True:
-    printMenu()
-    inputs = input('Seleccione una opción para continuar\n')
+        if int(inputs[0]) == 1:
+            print("\nInicializando....")
+            analyzer = controller.initCatalog()
 
-    if int(inputs[0]) == 1:
-        print("\nInicializando....")
-        analyzer = controller.initCatalog()
+        elif int(inputs[0]) == 2:
+            print("\nCargando información de transporte aereo ....")
+            start_time = time.process_time()
+            cargaDatos(analyzer)
+            stop_time = time.process_time()
+            elapsed_time_mseg = (stop_time - start_time)*1000
+            print("Tiempo de ejecución: " + str(elapsed_time_mseg))
+            PrintCargaDatos(analyzer)
 
-    elif int(inputs[0]) == 2:
-        print("\nCargando información de transporte aereo ....")
-        start_time = time.process_time()
-        cargaDatos(analyzer)
-        stop_time = time.process_time()
-        elapsed_time_mseg = (stop_time - start_time)*1000
-        print("Tiempo de ejecución: " + str(elapsed_time_mseg))
-        PrintCargaDatos(analyzer)
+        elif int(inputs[0]) == 3:
+            start_time = time.process_time()
+            Requerimiento1(analyzer)
+            stop_time = time.process_time()
+            elapsed_time_mseg = (stop_time - start_time)*1000
+            print("Tiempo de ejecución: " + str(elapsed_time_mseg))
 
-    elif int(inputs[0]) == 3:
-        start_time = time.process_time()
-        Requerimiento1(analyzer)
-        stop_time = time.process_time()
-        elapsed_time_mseg = (stop_time - start_time)*1000
-        print("Tiempo de ejecución: " + str(elapsed_time_mseg))
-
-    elif int(inputs[0]) == 4:
-        start_time = time.process_time()
-        Requerimiento2(analyzer)
-        stop_time = time.process_time()
-        elapsed_time_mseg = (stop_time - start_time)*1000
-        print("Tiempo de ejecución: " + str(elapsed_time_mseg))
-    
-    elif int(inputs[0]) == 5:
-        origen = input('Ciudad de origen: ')
-        destino = input('Ciudad de destino: ' )
-        start_time = time.process_time()
-        Requerimiento3(analyzer,origen,destino)
-        stop_time = time.process_time()
-        elapsed_time_mseg = (stop_time - start_time)*1000
-        print("Tiempo de ejecución: " + str(elapsed_time_mseg))
-    
-    elif int(inputs[0]) == 6:
-        start_time = time.process_time()
-        Requerimiento4(analyzer)
-        stop_time = time.process_time()
-        elapsed_time_mseg = (stop_time - start_time)*1000
-        print("Tiempo de ejecución: " + str(elapsed_time_mseg))
-
-    elif int(inputs[0]) == 7:
-        aeropuerto = input('Ingrese el IATA del aeropuerto fuera de funcionamiento: ')
-        start_time = time.process_time()
-        Requerimiento5(analyzer,aeropuerto)
-        stop_time = time.process_time()
-        elapsed_time_mseg = (stop_time - start_time)*1000
-        print("Tiempo de ejecución: " + str(elapsed_time_mseg))
+        elif int(inputs[0]) == 4:
+            Aero_1 = input("Ingrese el Codigo IATA del primer Aeropuerto: ")
+            Aero_2 = input("Ingrese el Codigo IATA del segundo Aeropuerto: ")
+            start_time = time.process_time()
+            Requerimiento2(analyzer, Aero_1, Aero_2)
+            stop_time = time.process_time()
+            elapsed_time_mseg = (stop_time - start_time)*1000
+            print("Tiempo de ejecución: " + str(elapsed_time_mseg))
         
-    else:
-        sys.exit(0)
-sys.exit(0)
+        elif int(inputs[0]) == 5:
+            origen = input('Ciudad de origen: ')
+            destino = input('Ciudad de destino: ' )
+            start_time = time.process_time()
+            Requerimiento3(analyzer,origen,destino)
+            stop_time = time.process_time()
+            elapsed_time_mseg = (stop_time - start_time)*1000
+            print("Tiempo de ejecución: " + str(elapsed_time_mseg))
+        
+        elif int(inputs[0]) == 6:
+            start_time = time.process_time()
+            Requerimiento4(analyzer)
+            stop_time = time.process_time()
+            elapsed_time_mseg = (stop_time - start_time)*1000
+            print("Tiempo de ejecución: " + str(elapsed_time_mseg))
+
+        elif int(inputs[0]) == 7:
+            aeropuerto = input('Ingrese el IATA del aeropuerto fuera de funcionamiento: ')
+            start_time = time.process_time()
+            Requerimiento5(analyzer,aeropuerto)
+            stop_time = time.process_time()
+            elapsed_time_mseg = (stop_time - start_time)*1000
+            print("Tiempo de ejecución: " + str(elapsed_time_mseg))
+            
+        else:
+            sys.exit(0)
+
+if __name__ == "__main__":
+    threading.stack_size(67108864)  # 64MB stack
+    sys.setrecursionlimit(2 ** 30)
+    thread = threading.Thread(target=thread_cycle)
+    thread.start()

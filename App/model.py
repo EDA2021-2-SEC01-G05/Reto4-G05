@@ -30,6 +30,7 @@ from DISClib.ADT import list as lt
 from DISClib.ADT import map as mp
 from DISClib.ADT import orderedmap as om
 from DISClib.DataStructures import mapentry as me
+from DISClib.Algorithms.Graphs import scc
 from DISClib.Algorithms.Sorting import mergesort as ms
 from DISClib.Algorithms.Graphs import dfs
 from DISClib.Algorithms.Graphs import dijsktra as djk
@@ -54,6 +55,7 @@ def newAnalyzer():
     analyzer = {
                 'red': None,
                 'aeropuertos': None,
+                "components": None
                 }
 
     analyzer['red'] = gr.newGraph(datastructure='ADJ_LIST',
@@ -63,7 +65,7 @@ def newAnalyzer():
     analyzer['blue'] = gr.newGraph(datastructure='ADJ_LIST',
                                               directed=False,
                                               size=14000,
-                                              comparefunction=None)                                          
+                                              comparefunction=None)                                       
     analyzer['aeropuertos'] = mp.newMap()
     analyzer['ciudades'] = mp.newMap()
     # mapa homonimos req3
@@ -173,7 +175,7 @@ def ordenAscendenteD(a,b):
 #======================================================================
 # Requerimientos
 #======================================================================
-
+#Req 1#
 def Requerimiento1(analyzer):
     grafo = analyzer['red']
     aeropuertos = gr.vertices(grafo)
@@ -197,6 +199,17 @@ def Requerimiento1(analyzer):
         lt.addLast(resultado,valor)
     lt.addLast(resultado,c)
     return resultado
+
+#Req 2#
+
+def clusterAirports(analyzer, IATA1, IATA2):
+    """
+    Informa si dos aeropuertos estan fuertemente conectados.
+    """
+    analyzer["components"] = scc.KosarajuSCC(analyzer["red"])
+    verificación = scc.stronglyConnected(analyzer["components"], IATA1, IATA2)
+    total = scc.connectedComponents(analyzer["components"])
+    return verificación, total
 
 #req 3
 def haversine(lon1, lat1, lon2, lat2):
@@ -371,6 +384,16 @@ def Requerimiento3(analyzer,origen,destino):
     lt.addLast(resultado,dt_o)
     lt.addLast(resultado,dt_d)
     return resultado
+
+#Requerimiento 4#
+
+def lifeMiles(analyzer, origen, millas):
+    """
+    """
+    red = analyzer["red"]
+    return mp.keySet(analyzer["ciudades"])
+
+#Requerimiento 5#
 
 def Requerimiento5(analyzer,aeropuerto):
     grafo = analyzer['red']
