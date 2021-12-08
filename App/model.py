@@ -24,6 +24,7 @@
  * Dario Correal - Version inicial
  """
 
+from DISClib.DataStructures.arraylist import addLast
 import config
 from DISClib.ADT.graph import gr
 from DISClib.ADT import list as lt
@@ -34,6 +35,9 @@ from DISClib.Algorithms.Graphs import scc
 from DISClib.Algorithms.Sorting import mergesort as ms
 from DISClib.Algorithms.Graphs import dfs
 from DISClib.Algorithms.Graphs import dijsktra as djk
+from DISClib.Algorithms.Graphs import prim
+from DISClib.ADT import queue as q
+from DISClib.ADT import stack as st
 assert config
 from math import radians, cos, sin, asin, sqrt
 
@@ -152,7 +156,7 @@ def addRouteND(analyzer, route):
     """
     origin = route['Departure']
     destination = route['Destination']
-    distance = route['distance_km']
+    distance = float(route['distance_km'])
     red = analyzer["red"]
     edge = gr.getEdge(red, destination, origin)
     if edge is not None:
@@ -387,11 +391,84 @@ def Requerimiento3(analyzer,origen,destino):
 
 #Requerimiento 4#
 
-def lifeMiles(analyzer, origen, millas):
-    """
-    """
-    red = analyzer["red"]
-    return mp.keySet(analyzer["ciudades"])
+def lifeMiles(analyzer, origen):
+    blue = analyzer["blue"]
+    ciudades = analyzer['ciudades']
+    cities_origin = mp.get(ciudades, origen)["value"]
+    if lt.size(cities_origin) > 1:
+        ID_base = ciudades_homonimas(cities_origin)
+        ciudad_base = mp.get(analyzer["ciudades_id"], ID_base)["value"]
+    else:
+        ID_base = lt.firstElement(cities_origin)["id"]
+        ciudad_base = mp.get(analyzer["ciudades_id"], ID_base)["value"]
+    
+    aero_base = aeropuertos_cercanos(analyzer, ciudad_base)["IATA"]
+
+    search = prim.PrimMST(blue)
+    prim.edgesMST(blue, search)
+    path = search['mst']
+    nodos = lt.newList()
+    large = 0
+    final = None
+    peso = prim.weightMST(blue, search)
+
+    while not q.isEmpty(path):
+        edge = q.dequeue(path)
+        lt.addLast(nodos, edge["vertexB"])
+    
+    cantidad = lt.size(nodos)
+
+    h = dfs.DepthFirstSearch(blue, aero_base)
+    for nodo in lt.iterator(nodos):
+        if dfs.hasPathTo(h, nodo):
+            p = dfs.pathTo(h, nodo)
+            if st.size(p) > large:
+                large = st.size(p)
+                final = p
+    return final, peso, cantidad, aero_base
+
+def ciudades_homonimas(lista_o):
+    print("-" * 50)
+    print('Posibles ciudades de origen: ')
+    for valor in lt.iterator(lista_o):
+        print("ID: " + valor['id'] + " Nombre: " + valor["city_ascii"] + " Latitud: " + valor["lat"] + " Longitud: " + valor["lng"] 
+                                                                    + " Pais: " + valor["country"] + " Subregion: " + valor['admin_name'])
+    print("-" * 50)                                                 
+    id_o = input('Escoja la ciudad de origen deseada (ingrese el ID de la ciudad): ')
+    return id_o
+
+def aeropuertos_cercanos(analyzer, ciudad):
+    aeropuertos = lt.newList()
+    aer_o = om.values(analyzer['latlng'],(float(ciudad["lat"]) - 1), (float(ciudad["lat"]) + 1))
+    for omap in lt.iterator(aer_o):
+        listas = om.values(omap, (float(ciudad["lng"]) - 1), (float(ciudad["lng"]) + 1))
+        for lista in lt.iterator(listas):
+            tamano = lt.size(lista)
+            i = 0
+            while i<tamano:
+                e = lt.removeLast(lista)
+                lt.addLast(aeropuertos,e)
+                i += 1
+    distancias_o = lt.newList()
+
+    for a_o in lt.iterator(aeropuertos):
+        latitud = float(a_o['Latitude'])
+        longitud = float(a_o['Longitude'])
+        d = haversine(float(ciudad["lng"]),(float(ciudad["lat"])),longitud,latitud)
+        lt.addLast(distancias_o,d)
+    ms.sort(distancias_o,ordenAscendenteD)
+
+    dist_o = lt.firstElement(distancias_o)
+
+    for a_o in lt.iterator(aeropuertos):
+        latitud_o = float(a_o['Latitude'])
+        longitud_o = float(a_o['Longitude'])
+        d_o = haversine(float(ciudad["lng"]),(float(ciudad["lat"])),longitud_o,latitud_o)
+        if d_o == dist_o:
+            aero_o = a_o
+            break
+    return aero_o
+
 
 #Requerimiento 5#
 

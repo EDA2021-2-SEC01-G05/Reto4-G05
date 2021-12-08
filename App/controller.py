@@ -124,8 +124,8 @@ def Requerimiento2(analyzer, IATA1, IATA2):
 def Requerimiento3(analyzer,origen,destino):
     return model.Requerimiento3(analyzer,origen,destino)
 
-def Requerimiento4(analyzer, origen, millas):
-    return model.lifeMiles(analyzer, origen, millas)
+def Requerimiento4(analyzer, origen):
+    return model.lifeMiles(analyzer, origen)
 
 def Requerimiento5(analyzer,aeropuerto):
     return model.Requerimiento5(analyzer,aeropuerto)

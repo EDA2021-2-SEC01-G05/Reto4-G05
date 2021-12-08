@@ -173,16 +173,43 @@ def Requerimiento3(analyzer,origen,destino):
     return None
 
 def Requerimiento4(analyzer):
-    origen = "bogota"
-    millas = 10291
-    llaves = controller.Requerimiento4(analyzer, origen, millas)
-    x = 0
-    for llave in lt.iterator(llaves):
-        print(llave)
-        if x == 10:
+    origen = input("Ingrese la Ciudad de Origen: ")
+    millas = int(input("Ingrese su cantidad de Millas: "))
+    km = millas * 1.60
+    final, costo, cantidad, iata = controller.Requerimiento4(analyzer, origen)
+    peso = 0 
+    print("Aeropuerto de Origen: " + mp.get(analyzer["aeropuertos"], iata)["value"]["Name"] 
+            + " de la ciudad de " + mp.get(analyzer["aeropuertos"], iata)["value"]["City"] + ", " 
+                + mp.get(analyzer["aeropuertos"], iata)["value"]["Country"])
+    print("-" * 90)
+    print("Numero de Aeropuertos Posibles: " + str(cantidad))
+    print("-" * 90)
+    print("Maxima distancia (Km) posible entre aeropuertos: " + str(round(costo, 2)))
+    print("-" * 90)
+    print("Millas diponibles del pasajero en Km: " + str(round(km, 2)))
+    print("-" * 90)
+    print("|" + " " * 25 + "Detalles del Recorrido más Largo" + " " * 25 + "|")
+    print("-" * 90)
+    while not st.isEmpty(final):
+        ver_A = st.pop(final)
+        ver_B = st.top(final)
+        edge = gr.getEdge(analyzer["blue"], ver_A, ver_B)
+        print(edge["vertexA"] + "--->" + edge["vertexB"] 
+                    + " costo: " + str(edge["weight"]))
+        peso += edge["weight"]
+        if st.size(final) == 1:
             break
-        x+= 1
-    return None
+    print("-" * 90)
+    print("Distancia del Recorrido más Largo: " + str(round(peso, 2)))
+    if km < peso:
+        total = peso - km
+        millas_finanles = round((total / 1.60), 2)
+        print("Al pasajero le faltan: " + str(millas_finanles) + " millas para completar el viaje")
+    else:
+        total = km - peso
+        millas_finanles = round((total / 1.60), 2)
+        print("Al pasajero le sobran: " + str(millas_finanles) + " millas")
+    return None 
 
 def Requerimiento5(analyzer,aeropuerto):
     resultado = controller.Requerimiento5(analyzer,aeropuerto)
